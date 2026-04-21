@@ -1,0 +1,193 @@
+// ─── Localisation ─────────────────────────────────────────────────────────────
+
+export interface Localisation {
+  id: string;
+  region: string;
+  prefecture: string;
+  commune: string;
+  quartier: string;
+}
+
+// ─── Enums Annonce ────────────────────────────────────────────────────────────
+
+export type TypeAnnonce = 'VENTE' | 'LOCATION' | 'BAIL';
+
+export type TypeBien =
+  // Habitations
+  | 'APPARTEMENT'
+  | 'MAISON'
+  | 'VILLA'
+  // Autres
+  | 'TERRAIN'
+  | 'MAGASIN'
+  | 'BUREAU'
+  | 'ENTREPOT'
+  | 'AUTRE';
+
+export type TypeUsage =
+  | 'AGRICOLE'
+  | 'HABITATION'
+  | 'COMMERCIAL'
+  | 'LOISIR'
+  | 'PROFESSIONNEL'
+  | 'AUTRE';
+
+export type DocumentsDisponibles =
+  | 'TITRE_FONCIER'
+  | 'DONATION'
+  | 'ACTE_DE_VENTE'
+  | 'CERTIFICAT_USAGE_FONCIER'
+  | 'AUTRE';
+
+// ─── Média ────────────────────────────────────────────────────────────────────
+
+export interface Media {
+  id: number;
+  url: string;
+  typeMime: string;
+  ordre: number;
+}
+
+// ─── Annonceur (info publique de l'auteur) ────────────────────────────────────
+
+export type RoleAnnonceur = 'PARTICULIER' | 'PROFESSIONNEL' | 'MODERATEUR' | 'ADMINISTRATEUR';
+
+export interface Annonceur {
+  username: string;
+  nom: string | null;
+  prenom: string | null;
+  telephone: string | null;
+  photoProfil: string | null;
+  role: RoleAnnonceur | null;
+}
+
+// ─── BienImmo (réponse API) ───────────────────────────────────────────────────
+
+export interface BienImmo {
+  id: number;
+  referenceAnnonce: string;
+  titre: string;
+  description: string;
+  prix: number;
+  prixRevise: number | null;
+  localisationId: string;
+  localisation?: Localisation; // inclus si le backend l'embarque
+  complementAdresse: string | null;
+  longitude: number | null;
+  latitude: number | null;
+  typeAnnonce: TypeAnnonce;
+  typeBien: TypeBien;
+  typeUsage: TypeUsage | null;
+  fraisHonoraire: number | null;
+  documentsDisponibles: DocumentsDisponibles | null;
+  surfaceTotal: number | null;
+  dateCreation: string;
+  dateModification: string;
+  actif: boolean;
+  userId: string;
+  nbFavoris?: number;
+  vueCount?: number;
+  annonceur?: Annonceur;
+  medias: Media[];
+}
+
+// ─── Requête création ─────────────────────────────────────────────────────────
+
+export interface CreateBienImmoRequest {
+  titre: string;
+  description: string;
+  prix: number;
+  typeAnnonce: TypeAnnonce;
+  typeBien: TypeBien;
+  typeUsage?: TypeUsage;
+  documentsDisponibles?: DocumentsDisponibles;
+  localisationId: string;
+  fraisHonoraire?: number;
+  surfaceTotal?: number;
+  complementAdresse?: string;
+  medias: { uri: string; name: string; type: string }[];
+}
+
+// ─── Requête modification ─────────────────────────────────────────────────────
+
+export interface UpdateBienImmoRequest {
+  titre?: string;
+  description?: string;
+  prix?: number;
+  prixRevise?: number;
+  localisationId?: string;
+  complementAdresse?: string;
+  longitude?: number;
+  latitude?: number;
+  typeAnnonce?: TypeAnnonce;
+  fraisHonoraire?: number;
+  typeBien?: TypeBien;
+  typeUsage?: TypeUsage;
+  documentsDisponibles?: DocumentsDisponibles;
+  surfaceTotal?: number;
+  /** Nouveaux médias à ajouter (optionnel). */
+  medias?: { uri: string; name: string; type: string }[];
+}
+
+// ─── Filtres de recherche ─────────────────────────────────────────────────────
+
+export interface AnnonceFilterParams {
+  reference?: string;
+  typeAnnonce?: TypeAnnonce;
+  typeBien?: TypeBien;
+  typeUsage?: TypeUsage;
+  prixMin?: number;
+  prixMax?: number;
+  region?: string;
+  prefecture?: string;
+  commune?: string;
+  quartier?: string;
+  sort?: string;
+  direction?: 'asc' | 'desc';
+}
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
+
+/** Structure réelle retournée par le backend Anoventix */
+export interface PageResponse<T> {
+  data: T[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+// ─── Labels UI ────────────────────────────────────────────────────────────────
+
+export const TYPE_ANNONCE_LABELS: Record<TypeAnnonce, string> = {
+  VENTE: 'Vente',
+  LOCATION: 'Location',
+  BAIL: 'Bail',
+};
+
+export const TYPE_BIEN_LABELS: Record<TypeBien, string> = {
+  APPARTEMENT: 'Appartement',
+  MAISON: 'Maison',
+  VILLA: 'Villa',
+  TERRAIN: 'Terrain',
+  MAGASIN: 'Magasin',
+  BUREAU: 'Bureau',
+  ENTREPOT: 'Entrepôt',
+  AUTRE: 'Autre',
+};
+
+export const TYPE_USAGE_LABELS: Record<TypeUsage, string> = {
+  AGRICOLE: 'Agricole',
+  HABITATION: 'Habitation',
+  COMMERCIAL: 'Commercial',
+  LOISIR: 'Loisir',
+  PROFESSIONNEL: 'Professionnel',
+  AUTRE: 'Autre',
+};
+
+export const DOCUMENTS_LABELS: Record<DocumentsDisponibles, string> = {
+  TITRE_FONCIER: 'Titre foncier',
+  DONATION: 'Donation',
+  ACTE_DE_VENTE: 'Acte de vente',
+  CERTIFICAT_USAGE_FONCIER: 'Certificat d\'usage foncier',
+  AUTRE: 'Autre',
+};
